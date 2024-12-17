@@ -1,0 +1,29 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: laravel_app
+    volumes:
+      - ./doc-root:/var/www/html
+    ports:
+      - "8090:80"
+    environment:
+      APP_ENV: local
+      APP_DEBUG: 1
+      APP_KEY: base64:xqLJsyCPG+qVdHh5UlyAaEpAjUekNmdVY58WiQF9KLo=
+      DB_CONNECTION: sqlite
+      REDIS_HOST: redis
+      REDIS_PASSWORD: redispassword
+      REDIS_PORT: 6379
+
+
+  redis:
+    image: redis:alpine
+    container_name: laravel_redis
+    ports:
+      - "6379:6379"
+    command: ["redis-server", "--requirepass", "redispassword"]
+
+volumes:
+  db_data:

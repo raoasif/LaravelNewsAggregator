@@ -1,0 +1,27 @@
+# Laravel specific
+/vendor
+/node_modules
+/public/storage
+/storage/*.key
+.env
+.env.local
+.env.*.local
+.phpunit.result.cache
+.phpstorm.meta.php
+Homestead.json
+Homestead.yaml
+/public/hot
+/public/mix-manifest.json
+/public/storage
+/storage/debugbar
+/storage/framework/sessions
+/storage/framework/views
+/storage/logs
+
+# Docker
+.docker
+docker-compose.override.yml
+
+# IDEs and editors
+/.idea
+/.vscode
