@@ -17,14 +17,14 @@ class ArticleService
      * @param array $filters
      * @return \Illuminate\Contracts\Pagination\LengthAwarePaginator
      */
-    public function getArticles(array $filters)
+    public function getArticles(array $filters, $perPage)
     {
         $query = $this->article->query();
 
         // Search by title or description
         if (isset($filters['search'])) {
-            $query->where('title', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            $query->where('title', 'like', '%' . $filters['search'] . '%');
+                //   ->orWhere('description', 'like', '%' . $filters['search'] . '%');
         }
 
         // Filter by category
@@ -43,7 +43,7 @@ class ArticleService
         }
 
         // Paginate results (default 10 per page)
-        return $query->paginate(10);
+        return $query->paginate($perPage);
     }
 
     /**
