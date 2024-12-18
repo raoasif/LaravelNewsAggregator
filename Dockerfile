@@ -1,4 +1,4 @@
-# Use official PHP image with Apache
+# Use the official PHP image with Apache
 FROM php:8.2-apache
 
 # Install dependencies and PHP extensions
@@ -28,6 +28,12 @@ WORKDIR /var/www/html
 
 # Copy project files
 COPY . .
+
+# Ensure proper permissions for Laravel storage and cache
+# RUN chown -R www-data:www-data /var/www/html/database /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Install Laravel dependencies
+# RUN composer install --no-dev --optimize-autoloader
 
 # Expose the container's default port
 EXPOSE 80
