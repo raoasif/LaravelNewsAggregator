@@ -56,4 +56,32 @@ class ArticleService
     {
         return Article::find($id);
     }
+
+    public function getPersonalizedFeed($preferences, $perPage = 10)
+    {
+        // If preferences are not found, return an empty collection or handle as needed
+        if (!$preferences) {
+            return collect([]);
+        }
+
+        $preferences = $preferences->toArray();
+
+        // Build the query to filter articles based on the user's preferences
+        $query = Article::query();
+
+        if (!empty($preferences['categories'])) {
+            $query->whereIn('category', $preferences['categories']);
+        }
+
+        if (!empty($preferences['sources'])) {
+            $query->whereIn('source', $preferences['sources']);
+        }
+
+        if (!empty($preferences['authors'])) {
+            $query->whereIn('author', $preferences['authors']);
+        }
+
+        // Return the paginated result
+        return $query->paginate($perPage);
+    }
 }
