@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\ArticleResource;
+use App\Models\Article;
 use App\Services\ArticleService;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\Json\ResourceCollection;
 
 class ArticleController extends Controller
 {
@@ -19,14 +21,15 @@ class ArticleController extends Controller
      * Fetch articles with pagination and filters
      *
      * @param Request $request
-     * @return App\Http\Resources\ArticleResource
+     * @return \Illuminate\Http\JsonResponse
      */
-    public function index(Request $request) {
+    public function index(Request $request): ResourceCollection{
+        $perPage = $request->query('per_page', 10);
         $filters = $request->only(['search', 'category', 'source', 'date']);
 
         try {
             // Fetch articles via service class
-            $articles = $this->articleService->getArticles($filters);
+            $articles = $this->articleService->getArticles($filters, $perPage);
             // Return paginated articles wrapped in a resource
             return ArticleResource::collection($articles);
         } catch (\Exception $e) {
@@ -40,12 +43,8 @@ class ArticleController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function show($id)
-    {
+    public function show(?Article $article): ArticleResource{
         try {
-            // Retrieve article by ID
-            $article = $this->articleService->getArticleById($id);
-
             if (!$article) {
                 return response()->json(['message' => 'Article not found'], 404);
             }
