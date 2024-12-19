@@ -1,7 +1,8 @@
 <?php
 
-namespace App\Http\Controllers;
+namespace App\Http\Controllers\Api;
 
+use App\Http\Controllers\Controller;
 use App\Http\Requests\SetPreferencesRequest;
 use App\Services\UserPreferenceService;
 use Illuminate\Http\Request;
@@ -23,7 +24,7 @@ class UserPreferenceController extends Controller
         $this->userPreferenceService->setPreferences(auth()->id(), $validated);
         return response()->json(['message' => 'Preferences saved successfully'], 200);
     } catch (\Exception $e) {
-        return response()->json(['error' => 'Failed to save preferences'], 500);
+        return response()->json(['message' => 'Failed to save preferences', 'error' => $e->getMessage()], 500);
     }
 }
 
