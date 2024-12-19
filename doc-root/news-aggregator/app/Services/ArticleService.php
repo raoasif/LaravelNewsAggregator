@@ -23,8 +23,8 @@ class ArticleService
 
         // Search by title or description
         if (isset($filters['search'])) {
-            $query->where('title', 'like', '%' . $filters['search'] . '%');
-                //   ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            $query->where('title', 'like', '%' . $filters['search'] . '%')
+                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
         }
 
         // Filter by category
@@ -64,20 +64,20 @@ class ArticleService
             return collect([]);
         }
 
-        $preferences = $preferences->toArray();
+        // $preferences = $preferences->toArray();
 
         // Build the query to filter articles based on the user's preferences
         $query = Article::query();
 
-        if (!empty($preferences['categories'])) {
+        if (!empty($preferences['preferred_categories'])) {
             $query->whereIn('category', $preferences['categories']);
         }
 
-        if (!empty($preferences['sources'])) {
+        if (!empty($preferences['preferred_sources'])) {
             $query->whereIn('source', $preferences['sources']);
         }
 
-        if (!empty($preferences['authors'])) {
+        if (!empty($preferences['preferred_authors'])) {
             $query->whereIn('author', $preferences['authors']);
         }
 
