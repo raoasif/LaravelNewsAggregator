@@ -12,12 +12,13 @@ class UserPreferenceService
     }
 
     public function setPreferences($userId, array $preferences){
-        UserPreference::updateOrCreate(
+
+        $this->userPrefrence->updateOrCreate(
             ['user_id' => $userId],
             [
-                'categories' => json_encode($preferences['categories'] ?? []),
-                'sources' => json_encode($preferences['sources'] ?? []),
-                'authors' => json_encode($preferences['authors'] ?? []),
+                'preferred_categories' => json_encode($preferences['categories'] ?? []),
+                'preferred_sources' => json_encode($preferences['sources'] ?? []),
+                'preferred_authors' => json_encode($preferences['authors'] ?? []),
             ]
         );
     }
@@ -26,9 +27,9 @@ class UserPreferenceService
         $preferences = UserPreference::where('user_id', $userId)->first();
 
         return [
-            'categories' => json_decode($preferences->categories ?? '[]', true),
-            'sources' => json_decode($preferences->sources ?? '[]', true),
-            'authors' => json_decode($preferences->authors ?? '[]', true),
+            'categories' => json_decode($preferences->preferred_categories ?? '[]', true),
+            'sources' => json_decode($preferences->preferred_sources ?? '[]', true),
+            'authors' => json_decode($preferences->preferred_authors ?? '[]', true),
         ];
     }
 }

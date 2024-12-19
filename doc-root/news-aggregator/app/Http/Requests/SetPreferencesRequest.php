@@ -22,11 +22,11 @@ class SetPreferencesRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'categories' => 'array',
+            'categories' => 'array|required_without_all:sources,authors',
             'categories.*' => 'string',
-            'sources' => 'array',
+            'sources' => 'array|required_without_all:categories,authors',
             'sources.*' => 'string',
-            'authors' => 'array',
+            'authors' => 'array|required_without_all:categories,sources',
             'authors.*' => 'string',
         ];
     }
