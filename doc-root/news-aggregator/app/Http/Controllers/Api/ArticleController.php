@@ -73,4 +73,6 @@ class ArticleController extends Controller
             return response()->json(['error' => 'Failed to fetch personalized feed'], 500);
         }
     }
+
+    // TO DO: Needs to add one endpoint to show available options for prefrences
 }
