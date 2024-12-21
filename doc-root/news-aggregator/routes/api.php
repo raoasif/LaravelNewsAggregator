@@ -17,7 +17,9 @@ Route::get('/test-api', function (Request $request) {
 });
 
 Route::post('/register', [ApiAuthController::class, 'register']);
-Route::post('/login', [ApiAuthController::class, 'login'])->name('login');
+Route::post('/login', [ApiAuthController::class, 'login'])
+    ->middleware('throttle:5,1') // 5 requests per minute
+    ->name('login');
 
 Route::middleware('throttle:login')->group(function () {
 });
