@@ -41,6 +41,27 @@ class ArticleController extends Controller
      *         @OA\Schema(type="string")
      *     ),
      *     @OA\Parameter(
+     *         name="category",
+     *         in="query",
+     *         description="Filter articles by category",
+     *         required=false,
+     *         @OA\Schema(type="string", example="Sports")
+     *     ),
+     *     @OA\Parameter(
+     *         name="source",
+     *         in="query",
+     *         description="Filter articles by source",
+     *         required=false,
+     *         @OA\Schema(type="string", example="New York Times")
+     *     ),
+     *     @OA\Parameter(
+     *         name="date",
+     *         in="query",
+     *         description="Filter articles by publication date (format: YYYY-MM-DD)",
+     *         required=false,
+     *         @OA\Schema(type="string", format="date")
+     *     ),
+     *     @OA\Parameter(
      *         name="per_page",
      *         in="query",
      *         description="Number of articles per page",
@@ -129,6 +150,53 @@ class ArticleController extends Controller
             return response()->json(['error' => 'Failed to fetch article'], 500);
         }
     }
+
+    /**
+     * @OA\Get(
+     *     path="/personalized-feed",
+     *     summary="Get personalized feed for the authenticated user",
+     *     tags={"Articles"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="per_page",
+     *         in="query",
+     *         description="Number of articles per page (pagination)",
+     *         required=false,
+     *         @OA\Schema(type="integer", default=10)
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Paginated list of personalized articles",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="data", type="array", @OA\Items(ref="#/components/schemas/Article")),
+     *             @OA\Property(property="links", type="object",
+     *                 @OA\Property(property="first", type="string", example="http://api.example.com/articles/personalized?page=1"),
+     *                 @OA\Property(property="last", type="string", example="http://api.example.com/articles/personalized?page=10"),
+     *                 @OA\Property(property="prev", type="string", nullable=true, example=null),
+     *                 @OA\Property(property="next", type="string", nullable=true, example="http://api.example.com/articles/personalized?page=2")
+     *             ),
+     *             @OA\Property(property="meta", type="object",
+     *                 @OA\Property(property="current_page", type="integer", example=1),
+     *                 @OA\Property(property="from", type="integer", example=1),
+     *                 @OA\Property(property="last_page", type="integer", example=10),
+     *                 @OA\Property(property="path", type="string", example="http://api.example.com/articles/personalized"),
+     *                 @OA\Property(property="per_page", type="integer", example=10),
+     *                 @OA\Property(property="to", type="integer", example=10),
+     *                 @OA\Property(property="total", type="integer", example=100)
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to fetch personalized feed",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Failed to fetch personalized feed")
+     *         )
+     *     )
+     * )
+     */
 
     public function getPersonalizedFeed(Request $request)
     {

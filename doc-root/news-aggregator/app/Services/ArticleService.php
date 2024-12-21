@@ -22,29 +22,32 @@ class ArticleService
         $query = $this->article->query();
 
         // Search by title or description
-        if (isset($filters['search'])) {
-            $query->where('title', 'like', '%' . $filters['search'] . '%')
-                  ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+        if (!empty($filters['search'])) {
+            $query->where(function ($q) use ($filters) {
+                $q->where('title', 'like', '%' . $filters['search'] . '%')
+                ->orWhere('description', 'like', '%' . $filters['search'] . '%');
+            });
         }
 
         // Filter by category
-        if (isset($filters['category'])) {
+        if (!empty($filters['category'])) {
             $query->where('category', $filters['category']);
         }
 
         // Filter by source
-        if (isset($filters['source'])) {
-            $query->where('source', $filters['source']);
+        if (!empty($filters['source'])) {
+            $query->where('source_name', $filters['source']);
         }
 
         // Filter by date
-        if (isset($filters['date'])) {
-            $query->whereDate('published_date', $filters['date']);
+        if (!empty($filters['date'])) {
+            $query->whereDate('published_at', $filters['date']);
         }
 
         // Paginate results (default 10 per page)
         return $query->paginate($perPage);
     }
+
 
     /**
      * Retrieve a single article by its ID
