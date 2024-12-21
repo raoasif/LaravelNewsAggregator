@@ -28,10 +28,11 @@ class ArticleController extends Controller
 
      /**
      * @OA\Get(
-     *     path="/api/articles",
+     *     path="/articles",
      *     summary="Get paginated list of articles",
      *     description="Retrieve a list of articles with optional filters and pagination.",
      *     tags={"Articles"},
+     *     security={{"bearerAuth": {}}},
      *     @OA\Parameter(
      *         name="search",
      *         in="query",
@@ -77,6 +78,45 @@ class ArticleController extends Controller
      * @param int $id
      * @return \Illuminate\Http\JsonResponse
      */
+
+     /**
+     * @OA\Get(
+     *     path="/articles/{id}",
+     *     summary="Get article by ID",
+     *     tags={"Articles"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="ID of the article",
+     *         required=true,
+     *         @OA\Schema(type="integer")
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Article details",
+     *         @OA\JsonContent(ref="#/components/schemas/Article")
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Article not found",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="message", type="string", example="Article not found")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Failed to fetch article",
+     *         @OA\JsonContent(
+     *             type="object",
+     *             @OA\Property(property="error", type="string", example="Failed to fetch article")
+     *         )
+     *     ),
+     *     security={{"bearerAuth": {}}}
+     * )
+     */
+
     public function show(?Article $article): ArticleResource{
         try {
             if (!$article) {

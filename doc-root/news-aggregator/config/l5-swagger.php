@@ -14,7 +14,7 @@ return [
                  */
                 'api' => 'api/documentation',
             ],
-            'paths' => [
+            'paths' => [    
                 /*
                  * Edit to include full URL in ui for assets
                  */
@@ -91,7 +91,7 @@ return [
             /*
              * Edit to set the api's base path
              */
-            'base' => env('L5_SWAGGER_BASE_PATH', null),
+            'base' => env('L5_SWAGGER_BASE_PATH', '/news-aggregator/public/api'),
 
             /*
              * Absolute path to directories that should be excluded from scanning

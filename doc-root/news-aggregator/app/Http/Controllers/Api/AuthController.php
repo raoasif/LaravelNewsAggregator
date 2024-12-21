@@ -7,9 +7,42 @@ use App\Http\Requests\LoginRequest;
 use App\Http\Requests\UserRegisterationRequest;
 use App\Services\UserService;
 use Exception;
+use Illuminate\Auth\Events\PasswordReset;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Password;
 
+/**
+ * @OA\Tag(
+ *     name="User",
+ *     description="APIs for user authentication and password management"
+ * ),
+ * @OA\Schema(
+ *     schema="UserRegistrationRequest",
+ *     type="object",
+ *     required={"name", "email", "password", "password_confirmation"},
+ *     @OA\Property(property="name", type="string", description="Full name of the user"),
+ *     @OA\Property(property="email", type="string", format="email", description="Email address of the user"),
+ *     @OA\Property(property="password", type="string", format="password", description="Password for the user account"),
+ *     @OA\Property(property="password_confirmation", type="string", format="password", description="Password confirmation")
+ * ),
+ * @OA\Schema(
+ *     schema="LoginRequest",
+ *     type="object",
+ *     required={"email", "password"},
+ *     @OA\Property(
+ *         property="email",
+ *         type="string",
+ *         format="email",
+ *         description="The email of the user"
+ *     ),
+ *     @OA\Property(
+ *         property="password",
+ *         type="string",
+ *         format="password",
+ *         description="The password of the user"
+ *     )
+ * )
+ */
 class AuthController extends Controller
 {
     protected $userService;
@@ -19,6 +52,43 @@ class AuthController extends Controller
     }
 
     // User Registration
+
+    /**
+     * @OA\Post(
+     *     path="/register",
+     *     summary="Register a new user",
+     *     tags={"User"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"name", "email", "password", "password_confirmation"},
+     *             @OA\Property(property="name", type="string", example="John Doe"),
+     *             @OA\Property(property="email", type="string", format="email", example="jhondoe@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=201,
+     *         description="User registered successfully.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="User registered successfully."),
+     *             @OA\Property(
+     *                 property="user",
+     *                 type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="John Doe"),
+     *                 @OA\Property(property="email", type="string", example="jhondoe@example.com")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Registration failed."
+     *     )
+     * )
+     */
+
     public function register(UserRegisterationRequest $request)
     {
         try {
@@ -37,6 +107,42 @@ class AuthController extends Controller
         }
     }
 
+    /**
+     * @OA\Post(
+     *     path="/login",
+     *     summary="User login",
+     *     tags={"User"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             required={"email", "password"},
+     *             @OA\Property(property="email", type="string", format="email", example="jhondoe@example.com"),
+     *             @OA\Property(property="password", type="string", format="password", example="password123")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Login successful.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Login successful."),
+     *             @OA\Property(property="access_token", type="string", example="your-access-token"),
+     *             @OA\Property(property="token_type", type="string", example="bearer"),
+     *             @OA\Property(property="user", type="object",
+     *                 @OA\Property(property="id", type="integer", example=1),
+     *                 @OA\Property(property="name", type="string", example="John Doe"),
+     *                 @OA\Property(property="email", type="string", example="jhondoe@example.com")
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=401,
+     *         description="Invalid credentials.",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="message", type="string", example="Invalid credentials.")
+     *         )
+     *     )
+     * )
+     */
     public function login(LoginRequest $request)
     {
         $credentials = $request->only('email', 'password');
@@ -59,6 +165,28 @@ class AuthController extends Controller
     /**
      * Logout the authenticated user.
      */
+
+     /**
+     * @OA\Post(
+     *     path="/logout",
+     *     summary="Logout user",
+     *     tags={"User"},
+     *     security={{"bearerAuth": {}}},
+     *     @OA\Header(
+     *         header="Accept",
+     *         description="Sets the response format to JSON",
+     *         @OA\Schema(type="string", default="application/json")
+     *     ),     
+     *     @OA\Response(
+     *         response=200,
+     *         description="Successfully logged out."
+     *     ),
+     *     @OA\Response(
+     *         response=500,
+     *         description="Something went wrong."
+     *     )
+     * )
+     */
     public function logout(Request $request)
     {
         try{
@@ -77,7 +205,27 @@ class AuthController extends Controller
         }
     }
 
-
+     /**
+     * @OA\Post(
+     *     path="/password/forgot",
+     *     summary="Send reset password link",
+     *     tags={"User"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="email", type="string", format="email")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Reset link sent."
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Error sending reset link."
+     *     )
+     * )
+     */
     public function sendResetLinkEmail(Request $request)
     {
         $request->validate([
@@ -94,6 +242,30 @@ class AuthController extends Controller
                     : response()->json(['message' => __($status)], 400);
     }
 
+    /**
+     * @OA\Post(
+     *     path="/password/reset",
+     *     summary="Reset user password",
+     *     tags={"User"},
+     *     @OA\RequestBody(
+     *         required=true,
+     *         @OA\JsonContent(
+     *             @OA\Property(property="token", type="string"),
+     *             @OA\Property(property="email", type="string", format="email"),
+     *             @OA\Property(property="password", type="string", format="password"),
+     *             @OA\Property(property="password_confirmation", type="string", format="password")
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Password reset successful."
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Password reset failed."
+     *     )
+     * )
+     */
     public function resetPassword(Request $request)
     {
         $request->validate([
