@@ -116,7 +116,7 @@ class AuthController extends Controller
      *         required=true,
      *         @OA\JsonContent(
      *             required={"email", "password"},
-     *             @OA\Property(property="email", type="string", format="email", example="jhondoe@example.com"),
+     *             @OA\Property(property="email", type="string", format="email", example="johndoe@example.com"),
      *             @OA\Property(property="password", type="string", format="password", example="password123")
      *         )
      *     ),
@@ -176,7 +176,7 @@ class AuthController extends Controller
      *         header="Accept",
      *         description="Sets the response format to JSON",
      *         @OA\Schema(type="string", default="application/json")
-     *     ),     
+     *     ),
      *     @OA\Response(
      *         response=200,
      *         description="Successfully logged out."
@@ -290,6 +290,4 @@ class AuthController extends Controller
                     ? response()->json(['message' => __($status)], 200)
                     : response()->json(['message' => __($status)], 400);
     }
-
-
 }

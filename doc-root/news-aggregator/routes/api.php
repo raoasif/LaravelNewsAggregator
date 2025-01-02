@@ -6,9 +6,6 @@ use App\Http\Controllers\Api\UserPreferenceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-
-use App\Http\Controllers\AuthController;
-
 Route::get('/test-api', function (Request $request) {
     return response()->json([
         'message' => 'This is a test API route!',
@@ -21,16 +18,13 @@ Route::post('/login', [ApiAuthController::class, 'login'])
     ->middleware('throttle:5,1') // 5 requests per minute
     ->name('login');
 
-Route::middleware('throttle:login')->group(function () {
-});
-
 Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/logout', [ApiAuthController::class, 'logout'])->name('logout');
     Route::get('/user', function (Request $request) {
         return $request->user();
     });
-    
+
     Route::get('articles', [ArticleController::class, 'index']);
     Route::get('articles/{article}', [ArticleController::class, 'show']);
     Route::get('/personalized-feed', [ArticleController::class, 'getPersonalizedFeed']);
